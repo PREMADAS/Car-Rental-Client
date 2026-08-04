@@ -1,22 +1,41 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
 
 export default function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
+    const pathname = usePathname();
+    const isHomePage = pathname === "/";
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 50);
+        };
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
 
     const navLinks = [
         { name: "Home", href: "/" },
         { name: "Explore Cars", href: "/explore-cars" },
-        { name: "Add Car", href: "/add-car" },
+        { name: "Add Car", href: "/Add-car" },
         { name: "My Bookings", href: "/my-bookings" },
     ];
 
     const mobileVisibleLinks = navLinks.slice(0, 2);
     const mobileHiddenLinks = navLinks.slice(2);
 
+
+    const navBackground = isHomePage
+        ? scrolled
+            ? "bg-slate-900 shadow-md"
+            : "bg-transparent"
+        : "bg-slate-900";
+
     return (
-        <nav className="absolute top-0 left-0 z-20 w-full">
+        <nav className={`fixed top-0 left-0 z-50 w-full transition-colors duration-300 ${navBackground}`}>
             <div className="flex items-center justify-between px-4 py-4 sm:px-6 sm:py-6 md:px-10 lg:px-16">
                 <h1 className="text-2xl font-extrabold text-white sm:text-3xl">
                     Rent<span className="text-emerald-400">Q</span>
@@ -26,7 +45,14 @@ export default function Navbar() {
                     <ul className="flex gap-6 text-sm text-white lg:gap-8 lg:text-base">
                         {navLinks.map((link, i) => (
                             <li key={i}>
-                                <a href={link.href} className={i === 0 ? "text-emerald-400" : "text-white hover:text-emerald-400"}>
+                                <a
+                                    href={link.href}
+                                    className={
+                                        pathname === link.href
+                                            ? "text-emerald-400"
+                                            : "text-white hover:text-emerald-400"
+                                    }
+                                >
                                     {link.name}
                                 </a>
                             </li>
@@ -37,7 +63,14 @@ export default function Navbar() {
                 <ul className="flex items-center gap-5 text-sm text-white lg:hidden">
                     {mobileVisibleLinks.map((link, i) => (
                         <li key={i}>
-                            <a href={link.href} className={i === 0 ? "text-emerald-400" : "text-white hover:text-emerald-400"}>
+                            <a
+                                href={link.href}
+                                className={
+                                    pathname === link.href
+                                        ? "text-emerald-400"
+                                        : "text-white hover:text-emerald-400"
+                                }
+                            >
                                 {link.name}
                             </a>
                         </li>
@@ -70,7 +103,14 @@ export default function Navbar() {
                 <ul className="absolute top-full left-0 flex w-full flex-col gap-4 bg-black/90 px-4 py-6 text-white sm:px-6 lg:hidden">
                     {mobileHiddenLinks.map((link, i) => (
                         <li key={i}>
-                            <a href={link.href} onClick={() => setMenuOpen(false)} className="block text-white hover:text-emerald-400">
+                            <a
+                                href={link.href}
+                                onClick={() => setMenuOpen(false)}
+                                className={`block ${pathname === link.href
+                                        ? "text-emerald-400"
+                                        : "text-white hover:text-emerald-400"
+                                    }`}
+                            >
                                 {link.name}
                             </a>
                         </li>
