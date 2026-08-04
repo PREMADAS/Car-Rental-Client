@@ -1,5 +1,6 @@
 "use client";
 import Link from 'next/link';
+import { FcGoogle } from "react-icons/fc";
 
 const RegisterPage = () => {
 
@@ -89,8 +90,9 @@ const RegisterPage = () => {
 
                     <button
                         type="button"
-                        className="w-full rounded-lg border border-gray-300 py-2 font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                        className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 py-2 font-medium text-gray-700 transition-colors hover:bg-gray-50"
                     >
+                        <FcGoogle size={20} />
                         Continue with Google
                     </button>
 

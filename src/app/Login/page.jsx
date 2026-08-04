@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { FcGoogle } from "react-icons/fc";
 
 const LoginPage = () => {
     const onSubmit = (e) => {
@@ -73,11 +74,11 @@ const LoginPage = () => {
 
                     <button
                         type="button"
-                        className="w-full rounded-lg border border-gray-300 py-2 font-medium text-gray-700 transition-colors hover:bg-gray-50"
+                        className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 py-2 font-medium text-gray-700 transition-colors hover:bg-gray-50"
                     >
+                        <FcGoogle size={20} />
                         Continue with Google
                     </button>
-
                     <p className="mt-6 text-center text-sm text-gray-600">
                         Don&apos;t have an account?{" "}
                         <Link
