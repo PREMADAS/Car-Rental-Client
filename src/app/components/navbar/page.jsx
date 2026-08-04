@@ -1,64 +1,96 @@
 "use client";
-import React, { useState } from 'react'
-import Image from 'next/image';
-import Link from 'next/link';
+import { useState } from "react";
 
-const NavbarPage = () => {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
+export default function Navbar() {
+    const [menuOpen, setMenuOpen] = useState(false);
+
+    const navLinks = [
+        { name: "Home", href: "/" },
+        { name: "Explore Cars", href: "/explore-cars" },
+        { name: "Add Car", href: "/add-car" },
+        { name: "My Bookings", href: "/my-bookings" },
+    ];
 
     return (
-        <div className="navbar bg-gradient-to-r from-white to-orange-50 shadow-md sticky top-0 z-50 h-20 md:h-24 px-4 md:px-8">
+        <nav className="absolute top-0 left-0 z-20 w-full">
+            <div className="flex items-center justify-between px-6 py-6 md:px-10 lg:px-16">
+                <h1 className="text-3xl font-extrabold text-white sm:text-3xl">
+                    Rent<span className="text-emerald-400">Q</span>
+                </h1>
 
-            {/* Logo */}
-            <div className="navbar-start flex-1">
-                <div className="h-14 md:h-20 w-auto overflow-hidden flex items-center">
-                    <Image
-                        src="/images/logo.jpg"
-                        alt="RentQ Logo"
-                        width={200}
-                        height={200}
-                        className="h-full w-auto object-contain"
-                    />
+                <div className="hidden items-center gap-8 lg:flex">
+                    <ul className="flex gap-6 text-sm text-white lg:gap-8 lg:text-base">
+                        {navLinks.map((link, i) => {
+                            return (
+                                <li key={i}>
+                                    <a href={link.href} className={i === 0 ? "text-emerald-400" : "text-white hover:text-emerald-400"}>
+                                        {link.name}
+                                    </a>
+                                </li>
+                            );
+                        })}
+                    </ul>
                 </div>
-            </div>
 
-            {/* Menu items - only visible on laptop/desktop */}
-            <div className="navbar-center hidden lg:flex flex-none">
-                <ul className="menu menu-horizontal gap-6 font-semibold">
-                    <Link href='/'><li className="text-orange-600 border-b-2 border-orange-600">Home</li></Link>
-                    <li><a className="text-gray-700 hover:text-orange-600">Explore Cars</a></li>
-                    <li><a className="text-gray-700 hover:text-orange-600">Add Car</a></li>
-                    <li><a className="text-gray-700 hover:text-orange-600">My Bookings</a></li>
-                </ul>
-            </div>
+                <div className="flex items-center gap-3">
+                    <a href="/Login" className="text-sm text-white hover:text-emerald-400 lg:text-base">
+                        Login
+                    </a>
+                    <a href="/Register" className="rounded-full bg-emerald-400 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-500 lg:text-base">
+                        Register
+                    </a>
+                </div>
 
-            {/* Login / Register - only visible on laptop/desktop */}
-            <div className="navbar-end flex-1 hidden lg:flex gap-3">
-                <Link href="/Login" className="btn btn-outline border-orange-600 text-orange-600 hover:bg-orange-50">Login</Link>
-                <Link href="/Register" className="btn bg-orange-600 hover:bg-orange-700 text-white border-none">Register</Link>
-            </div>
 
-            {/* Hamburger - mobile & tablet only */}
-            <div className="navbar-end lg:hidden">
-                <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="btn btn-ghost">
-                    ☰
+                <button onClick={() => setMenuOpen(!menuOpen)} className="z-30 text-white lg:hidden" aria-label="Toggle menu">
+                    {menuOpen ? (
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-7 w-7">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    ) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-7 w-7">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    )}
                 </button>
             </div>
 
-            {/* Mobile dropdown menu */}
-            {isMenuOpen && (
-                <div className="absolute top-full left-0 w-full bg-white shadow-lg lg:hidden flex flex-col p-4 gap-3 z-40">
-                    <Link href='/' className="text-orange-600 font-semibold">Home</Link>
-                    <a className="text-gray-700 font-semibold">Explore Cars</a>
-                    <a className="text-gray-700 font-semibold">Add Car</a>
-                    <a className="text-gray-700 font-semibold">My Bookings</a>
-                    <Link href="/Login"> <a className="btn btn-outline border-orange-600 text-orange-600">Login</a></Link>
-                    <Link href="/Register" className="btn bg-orange-600 text-white border-none">Register</Link>
-                </div>
-            )}
+            {
+                menuOpen && (
+                    <ul className="absolute top-full left-0 flex w-full flex-col gap-4 bg-black/90 px-6 py-6 text-white lg:hidden">
+                        {navLinks.map((link, i) => {
+                            return (
+                                <li key={i}>
 
-        </div>
-    )
+                                    href={link.href}
+                                    onClick={() => setMenuOpen(false)}
+                                    className={i === 0 ? "block text-emerald-400" : "block text-white hover:text-emerald-400"}
+                                    <a>
+                                        {link.name}
+                                    </a>
+                                </li>
+
+                            );
+                        })}
+
+                        <li className="mt-2 border-t border-white/20 pt-4">
+                            <a href="/login" onClick={() => setMenuOpen(false)} className="block text-white hover:text-emerald-400">
+                                Login
+                            </a>
+                        </li>
+
+                        <li>
+
+                            href="/register"
+                            onClick={() => setMenuOpen(false)}
+                            className="mt-2 block w-fit rounded-full bg-emerald-400 px-5 py-2 font-semibold text-white hover:bg-emerald-500"
+                            <a >
+                                Register
+                            </a>
+                        </li>
+                    </ul>
+                )
+            }
+        </nav >
+    );
 }
-
-export default NavbarPage;
