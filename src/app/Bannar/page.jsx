@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Navbar from "../components/navbar/page";
+import Link from "next/link";
 
 
 export default function Hero() {
@@ -32,9 +33,11 @@ export default function Hero() {
 
                 {/* Play button + text */}
                 <div className="mt-6 flex items-center gap-3 sm:mt-8 sm:gap-4">
-                    <button className="rounded-full bg-emerald-400 px-6 py-3 text-sm font-semibold text-white transition hover:bg-emerald-500 sm:px-8 sm:py-3 sm:text-base">
+                    <Link href="/Explore-car"> <button className="rounded-full bg-emerald-400 px-6 py-3 text-sm font-semibold text-white transition hover:bg-emerald-500 sm:px-8 sm:py-3 sm:text-base">
                         Explore Cars
                     </button>
+                    </Link>
+
 
                 </div>
 

@@ -22,7 +22,8 @@ const AvailableCarPage = () => {
     if (loading) {
         return (
             <div className="min-h-[60vh] flex items-center justify-center bg-gradient-to-b from-sky-50 to-blue-100">
-                <div className="py-20 text-center font-bold text-blue-700">Loading cars...</div>
+                <span className="loading loading-spinner loading-lg text-orange-500"></span>
+                <p className="text-gray-500">Loading cars...</p>
             </div>
         );
     }

@@ -19,8 +19,8 @@ export default function Navbar() {
 
     const navLinks = [
         { name: "Home", href: "/" },
-        { name: "Explore Cars", href: "/explore-cars" },
-        { name: "Add Car", href: "/Add-car" },
+        { name: "Explore Cars", href: "/Explore-car" },
+        { name: "Add Car", href: "/private/Add-car" },
         { name: "My Bookings", href: "/my-bookings" },
     ];
 
@@ -107,8 +107,8 @@ export default function Navbar() {
                                 href={link.href}
                                 onClick={() => setMenuOpen(false)}
                                 className={`block ${pathname === link.href
-                                        ? "text-emerald-400"
-                                        : "text-white hover:text-emerald-400"
+                                    ? "text-emerald-400"
+                                    : "text-white hover:text-emerald-400"
                                     }`}
                             >
                                 {link.name}
