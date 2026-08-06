@@ -1,38 +1,54 @@
 "use client";
-import Link from 'next/link';
+
+import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
+import { useContext } from "react";
+import { useRouter } from "next/navigation";
+import { AuthContext } from "@/context/AuthContext";
 
 const RegisterPage = () => {
+    const router = useRouter();
+    const { register } = useContext(AuthContext);
 
-    const onSubmit = (e) => {
+    const onSubmit = async (e) => {
         e.preventDefault();
-        const registerData = new FormData(e.currentTarget);
-        const data = {};
 
-        registerData.forEach((value, key) => {
-            data[key] = value.toString();
-        });
-        console.log(data);
-    }
+        const formData = new FormData(e.currentTarget);
+
+        const userData = {
+            name: formData.get("name"),
+            email: formData.get("email"),
+            photoURL: formData.get("photoURL"),
+            password: formData.get("password"),
+        };
+
+        try {
+            await register(userData);
+
+            alert("Registration Successful");
+            router.push("/Login");
+        } catch (error) {
+            alert(error.message);
+        }
+    };
+
     return (
         <div className="relative min-h-screen bg-sky-50 px-4">
-            {/* Dark strip so navbar (white text) stays visible on top */}
             <div className="absolute top-0 left-0 h-20 w-full bg-slate-900 sm:h-24" />
 
-            {/* Register Card */}
             <div className="relative z-10 flex min-h-screen items-center justify-center pt-20 pb-10 sm:pt-24">
                 <div className="w-full mt-10 max-w-md bg-white shadow-lg rounded-2xl p-8">
 
-                    {/* Title */}
                     <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
                         Register
                     </h1>
 
-                    {/* Register Form */}
                     <form onSubmit={onSubmit} className="flex flex-col gap-4">
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Name
+                            </label>
                             <input
                                 type="text"
                                 name="name"
@@ -43,7 +59,9 @@ const RegisterPage = () => {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Email
+                            </label>
                             <input
                                 type="email"
                                 name="email"
@@ -54,7 +72,9 @@ const RegisterPage = () => {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Photo URL</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Photo URL
+                            </label>
                             <input
                                 type="text"
                                 name="photoURL"
@@ -64,7 +84,9 @@ const RegisterPage = () => {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Password
+                            </label>
                             <input
                                 type="password"
                                 name="password"
@@ -98,7 +120,10 @@ const RegisterPage = () => {
 
                     <p className="text-center text-sm text-gray-600 mt-6">
                         Already have an account?{" "}
-                        <Link href="/Login" className="text-sky-600 font-semibold hover:underline">
+                        <Link
+                            href="/Login"
+                            className="text-sky-600 font-semibold hover:underline"
+                        >
                             Login
                         </Link>
                     </p>
@@ -106,7 +131,7 @@ const RegisterPage = () => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default RegisterPage;

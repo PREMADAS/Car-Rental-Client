@@ -2,6 +2,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { Fuel, Users, Gauge, MapPin, Star, Search, SlidersHorizontal } from "lucide-react";
+import Link from "next/link";
 
 
 
@@ -11,7 +12,7 @@ const COLORS = {
     border: "#2C323D",
     text: "#F4F2EC",
     textMuted: "#8B92A0",
-    accent: "#FF5A36",
+    accent: "#34D399",
     available: "#35D07F",
     unavailable: "#E5484D",
 };
@@ -257,7 +258,7 @@ export default function ExploreCarPage() {
                                                 </span>
                                                 <span style={{ fontSize: 12, color: COLORS.textMuted }}> /day</span>
                                             </div>
-                                            <button
+                                            <Link href={`/Explore-car/Car-details/${car._id}`}><button
                                                 onClick={() => console.log("Selected car:", car)}
                                                 style={{
                                                     background: unavailable ? "transparent" : COLORS.accent,
@@ -272,6 +273,7 @@ export default function ExploreCarPage() {
                                             >
                                                 Details
                                             </button>
+                                            </Link>
 
                                         </div>
                                     </div>

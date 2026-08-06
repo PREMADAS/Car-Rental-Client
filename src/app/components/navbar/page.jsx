@@ -38,7 +38,7 @@ export default function Navbar() {
         <nav className={`fixed top-0 left-0 z-50 w-full transition-colors duration-300 ${navBackground}`}>
             <div className="flex items-center justify-between px-4 py-4 sm:px-6 sm:py-6 md:px-10 lg:px-16">
                 <h1 className="text-2xl font-extrabold text-white sm:text-3xl">
-                    Rent<span className="text-emerald-400">Q</span>
+                    Drive<span className="text-emerald-400">Fleet</span>
                 </h1>
 
                 <div className="hidden items-center gap-8 lg:flex">

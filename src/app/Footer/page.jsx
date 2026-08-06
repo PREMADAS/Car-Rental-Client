@@ -1,5 +1,6 @@
 "use client";
-import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from "react-icons/fa";
+import { FaFacebookF, FaInstagram, FaLinkedinIn } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 import { Mail, Phone, MapPin } from "lucide-react";
 
 const FooterPage = () => {
@@ -11,7 +12,7 @@ const FooterPage = () => {
                     {/* Company Info */}
                     <div className="flex flex-col items-center sm:items-start">
                         <h2 className="text-2xl font-extrabold text-white">
-                            Rent<span className="text-orange-400">Q</span>
+                            Drive<span className="text-orange-400">Fleet</span>
                         </h2>
                         <p className="mt-4 text-sm text-blue-200 leading-relaxed max-w-xs sm:max-w-none">
                             RentQ makes car rental simple, affordable, and reliable. Find your
@@ -22,7 +23,7 @@ const FooterPage = () => {
                                 <FaFacebookF size={18} />
                             </a>
                             <a href="#" className="hover:text-white transition-colors">
-                                <FaTwitter size={18} />
+                                <FaXTwitter size={18} />
                             </a>
                             <a href="#" className="hover:text-white transition-colors">
                                 <FaInstagram size={18} />

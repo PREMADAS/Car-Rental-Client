@@ -2,19 +2,30 @@
 
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
+import { useContext } from "react";
+import { useRouter } from "next/navigation";
+import { AuthContext } from "@/context/AuthContext";
 
 const LoginPage = () => {
-    const onSubmit = (e) => {
+    const router = useRouter();
+    const { login } = useContext(AuthContext);
+
+    const onSubmit = async (e) => {
         e.preventDefault();
+
         const formData = new FormData(e.currentTarget);
-        const data = {};
 
-        // Convert FormData to plain object
-        formData.forEach((value, key) => {
-            data[key] = value.toString();
-        });
+        const email = formData.get("email");
+        const password = formData.get("password");
 
-        console.log(data);
+        try {
+            await login(email, password);
+
+            alert("Login Successful");
+            router.push("/");
+        } catch (error) {
+            alert(error.message);
+        }
     };
 
     return (
@@ -25,12 +36,10 @@ const LoginPage = () => {
             {/* Login Card */}
             <div className="relative z-10 flex min-h-screen items-center justify-center pt-20 pb-10 sm:pt-24">
                 <div className="w-full mt-10 max-w-md rounded-2xl bg-white p-8 shadow-lg">
-                    {/* Title */}
                     <h1 className="mb-6 text-center text-3xl font-bold text-gray-800">
                         Login
                     </h1>
 
-                    {/* Login Form */}
                     <form onSubmit={onSubmit} className="flex flex-col gap-4">
                         <div>
                             <label className="mb-1 block text-sm font-medium text-gray-700">
@@ -79,6 +88,7 @@ const LoginPage = () => {
                         <FcGoogle size={20} />
                         Continue with Google
                     </button>
+
                     <p className="mt-6 text-center text-sm text-gray-600">
                         Don&apos;t have an account?{" "}
                         <Link

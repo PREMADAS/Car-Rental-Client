@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Star, Gauge } from "lucide-react";
+import Link from "next/link";
 
 const AvailableCarPage = () => {
     const [cars, setCars] = useState([]);
@@ -29,7 +30,7 @@ const AvailableCarPage = () => {
     }
 
     return (
-        <section className="bg-gradient-to-b from-sky-50 via-blue-50 to-blue-100 py-16">
+        <section className="bg-gradient-to-b from-sky-50 via-blue-50 to-blue-100 py-16 ">
             <div className="mx-auto max-w-7xl px-6">
                 <h2 className="text-3xl font-bold text-blue-900 mb-8">Available Cars</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -55,9 +56,10 @@ const AvailableCarPage = () => {
                                     {car.mileage ?? "N/A"}
                                 </span>
                             </div>
-                            <button className="mt-3 w-full rounded-lg bg-emerald-400 text-white py-2 font-medium hover:bg-emerald-500 transition-colors">
+                            <Link href={`/Available_car/Details/${car._id}`}> <button className="btn mt-3 w-full rounded-lg bg-emerald-400 text-white py-2 font-medium hover:bg-emerald-500 transition-colors">
                                 View Details
                             </button>
+                            </Link>
                         </div>
                     ))}
                 </div>
