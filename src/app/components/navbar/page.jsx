@@ -1,13 +1,24 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useState, useEffect, useContext } from "react";
+import { AuthContext } from "@/context/AuthContext";
+import { toast } from "react-toastify";
+
 
 export default function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const pathname = usePathname();
+    const { user, logout } = useContext(AuthContext);
     const isHomePage = pathname === "/";
+
+    const handleNavClick = (e, link) => {
+        if (link.href === "/private/Add-car" && !user) {
+            e.preventDefault();
+            router.push(`/Login?redirect=${link.href}`);
+        }
+    };
 
     useEffect(() => {
         const handleScroll = () => {
@@ -16,6 +27,18 @@ export default function Navbar() {
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
+
+    const router = useRouter();
+
+    const handleLogout = async () => {
+        try {
+            await logout();
+            toast.success("Logged out successfully");
+            router.push("/");
+        } catch (error) {
+            toast.error(error.message);
+        }
+    };
 
     const navLinks = [
         { name: "Home", href: "/" },
@@ -47,6 +70,7 @@ export default function Navbar() {
                             <li key={i}>
                                 <a
                                     href={link.href}
+                                    onClick={(e) => handleNavClick(e, link)}
                                     className={
                                         pathname === link.href
                                             ? "text-emerald-400"
@@ -60,11 +84,16 @@ export default function Navbar() {
                     </ul>
                 </div>
 
+
                 <ul className="flex items-center gap-5 text-sm text-white lg:hidden">
                     {mobileVisibleLinks.map((link, i) => (
                         <li key={i}>
                             <a
                                 href={link.href}
+                                onClick={(e) => {
+                                    handleNavClick(e, link);
+                                    setMenuOpen(false);
+                                }}
                                 className={
                                     pathname === link.href
                                         ? "text-emerald-400"
@@ -78,12 +107,31 @@ export default function Navbar() {
                 </ul>
 
                 <div className="hidden items-center gap-3 lg:flex">
-                    <Link href="/Login" className="text-sm text-white hover:text-emerald-400 lg:text-base">
-                        Login
-                    </Link>
-                    <Link href="/Register" className="rounded-full bg-emerald-400 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-500 lg:text-base">
-                        Register
-                    </Link>
+                    {user ? (
+                        <div className="flex items-center gap-3">
+                            <img
+                                src={user.photoURL || "/default-avatar.png"}
+
+                                className=" h-9 w-9 rounded-full object-cover"
+                            />
+                            <span className="text-white text-sm">{user.name}</span>
+                            <button
+                                onClick={handleLogout}
+                                className="btn rounded-full bg-red-500 px-4 py-1.5 text-sm font-semibold text-white hover:bg-red-600"
+                            >
+                                Logout
+                            </button>
+                        </div>
+                    ) : (
+                        <>
+                            <Link href="/Login" className="text-sm text-white hover:text-emerald-400 lg:text-base">
+                                Login
+                            </Link>
+                            <Link href="/Register" className="rounded-full bg-emerald-400 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-500 lg:text-base">
+                                Register
+                            </Link>
+                        </>
+                    )}
                 </div>
 
                 <button onClick={() => setMenuOpen(!menuOpen)} className="z-30 text-white lg:hidden" aria-label="Toggle menu">
@@ -116,19 +164,36 @@ export default function Navbar() {
                         </li>
                     ))}
 
-                    <li className="mt-2 border-t border-white/20 pt-4">
-                        <Link href="/Login" onClick={() => setMenuOpen(false)} className="block text-white hover:text-emerald-400">
-                            Login
-                        </Link>
-                    </li>
-
-                    <li>
-                        <Link href="/Register" onClick={() => setMenuOpen(false)} className="mt-2 block w-fit rounded-full bg-emerald-400 px-5 py-2 font-semibold text-white hover:bg-emerald-500">
-                            Register
-                        </Link>
-                    </li>
+                    <div className="hidden items-center gap-3 lg:flex">
+                        {user ? (
+                            <div className="flex items-center gap-3">
+                                <img
+                                    src={user.photoURL || "/default-avatar.png"}
+                                    alt={user.name}
+                                    className="h-9 w-9 rounded-full object-cover"
+                                />
+                                <span className="text-white text-sm">{user.name}</span>
+                                <button
+                                    onClick={handleLogout}
+                                    className="rounded-full bg-red-500 px-4 py-1.5 text-sm font-semibold text-white hover:bg-red-600"
+                                >
+                                    Logout
+                                </button>
+                            </div>
+                        ) : (
+                            <>
+                                <Link href="/Login" className="text-sm text-white hover:text-emerald-400 lg:text-base">
+                                    Login
+                                </Link>
+                                <Link href="/Register" className="rounded-full bg-emerald-400 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-500 lg:text-base">
+                                    Register
+                                </Link>
+                            </>
+                        )}
+                    </div>
                 </ul>
             )}
+
         </nav>
     );
 }

@@ -43,7 +43,7 @@ const AvailableCarPage = () => {
                         >
                             <img src={car.image} alt={car.name} className="w-full h-40 object-cover rounded-xl" />
                             <h3 className="mt-3 font-bold text-lg text-gray-900">{car.name}</h3>
-                            <p className="text-blue-600 font-semibold">${car.pricePerDay}/day</p>
+                            <p className="text-blue-600 font-semibold">${car.pricePerklm}/Km</p>
                             <div className="flex items-center gap-1 mt-1">
                                 <Star size={16} className="fill-yellow-400 text-yellow-400" />
                                 <span className="text-sm text-gray-700 font-medium">

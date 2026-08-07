@@ -256,7 +256,7 @@ export default function ExploreCarPage() {
                                                 <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 20, color: COLORS.text }}>
                                                     ${car.pricePerDay}
                                                 </span>
-                                                <span style={{ fontSize: 12, color: COLORS.textMuted }}> /day</span>
+                                                <span style={{ fontSize: 12, color: COLORS.textMuted }}> /Km</span>
                                             </div>
                                             <Link href={`/Explore-car/Car-details/${car._id}`}><button
                                                 onClick={() => console.log("Selected car:", car)}

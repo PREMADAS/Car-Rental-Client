@@ -3,10 +3,25 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Users, Fuel, Gauge, Settings2, MapPin } from "lucide-react";
+import { useContext } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { AuthContext } from "@/context/AuthContext";
+import Link from "next/link";
 
 export default function Page() {
     const { id } = useParams();
     const [car, setCar] = useState(null);
+    const { user } = useContext(AuthContext);
+    const router = useRouter();
+    const pathname = usePathname();
+
+    const handleBookNow = (e) => {
+        if (!user) {
+            e.preventDefault();
+            router.push(`/Login?redirect=${pathname}`);
+        }
+
+    };
 
     useEffect(() => {
         if (!id) return;
@@ -141,9 +156,12 @@ export default function Page() {
                         </div>
 
                         {/* Book Button */}
-                        <button className="btn w-full mt-4 py-4 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-400 text-white text-xl font-bold hover:scale-[1.02] transition duration-300">
-                            Book Now
-                        </button>
+                        <div className="px-6 pt-5 pb-6">
+                            <Link href="/Book" onClick={handleBookNow}> <button className="btn w-full py-4 rounded-xl bg-gradient-to-r from-[#2F6FED] to-[#4FD1E8] text-white cd-display text-xl font-bold tracking-wide hover:brightness-105 transition duration-200 border-none shadow-[0_10px_25px_rgba(47,111,237,0.35)]">
+                                Book Now
+                            </button>
+                            </Link>
+                        </div>
 
                     </div>
 

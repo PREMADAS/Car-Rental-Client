@@ -4,6 +4,8 @@ import { createContext, useEffect, useState } from "react";
 
 export const AuthContext = createContext(null);
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
 export default function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -12,7 +14,7 @@ export default function AuthProvider({ children }) {
     useEffect(() => {
         const getCurrentUser = async () => {
             try {
-                const res = await fetch("http://localhost:5000/me", {
+                const res = await fetch(`${API_URL}/me`, {
                     method: "GET",
                     credentials: "include",
                 });
@@ -37,64 +39,105 @@ export default function AuthProvider({ children }) {
 
     // Login
     const login = async (email, password) => {
-        const res = await fetch("http://localhost:5000/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            credentials: "include",
-            body: JSON.stringify({
-                email,
-                password,
-            }),
-        });
+        setLoading(true);
+        try {
+            const res = await fetch(`${API_URL}/login`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify({
+                    email,
+                    password,
+                }),
+            });
 
-        const data = await res.json();
+            const data = await res.json();
 
-        if (!res.ok) {
-            throw new Error(data.message);
+            if (!res.ok) {
+                throw new Error(data.message);
+            }
+
+            setUser(data.user);
+
+            return data;
+        } finally {
+            setLoading(false);
         }
-
-        setUser(data.user);
-
-        return data;
     };
 
     // Register
     const register = async (userData) => {
-        const res = await fetch("http://localhost:5000/register", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(userData),
-        });
+        setLoading(true);
+        try {
+            const res = await fetch(`${API_URL}/register`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(userData),
+            });
 
-        const data = await res.json();
+            const data = await res.json();
 
-        if (!res.ok) {
-            throw new Error(data.message);
+            if (!res.ok) {
+                throw new Error(data.message);
+            }
+
+            return data;
+        } finally {
+            setLoading(false);
         }
+    };
+    // Google Login
+    const googleLogin = async (credential) => {
+        setLoading(true);
+        try {
+            const res = await fetch(`${API_URL}/google-login`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify({ credential }),
+            });
 
-        return data;
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.message);
+            }
+
+            setUser(data.user);
+
+            return data;
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Logout
     const logout = async () => {
-        const res = await fetch("http://localhost:5000/logout", {
-            method: "POST",
-            credentials: "include",
-        });
+        setLoading(true);
+        try {
+            const res = await fetch(`${API_URL}/logout`, {
+                method: "POST",
+                credentials: "include",
+            });
 
-        const data = await res.json();
+            const data = await res.json();
 
-        if (!res.ok) {
-            throw new Error(data.message);
+            if (!res.ok) {
+                throw new Error(data.message);
+            }
+
+            setUser(null);
+
+            return data;
+        } finally {
+            setLoading(false);
         }
-
-        setUser(null);
-
-        return data;
     };
 
     const authInfo = {
@@ -105,6 +148,7 @@ export default function AuthProvider({ children }) {
         login,
         register,
         logout,
+        googleLogin,
     };
 
     return (

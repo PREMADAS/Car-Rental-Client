@@ -1,14 +1,33 @@
 "use client";
 
 import Link from "next/link";
-import { FcGoogle } from "react-icons/fc";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AuthContext } from "@/context/AuthContext";
+import { toast } from "react-toastify";
+import { FiEye, FiEyeOff } from "react-icons/fi";
+import { GoogleLogin } from "@react-oauth/google";
+import { useSearchParams } from "next/navigation";
 
 const LoginPage = () => {
     const router = useRouter();
-    const { login } = useContext(AuthContext);
+    const { login, googleLogin } = useContext(AuthContext);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [emailError, setEmailError] = useState("");
+    const searchParams = useSearchParams();
+    const redirectPath = searchParams.get("redirect") || "/";
+
+
+    const validateEmail = (email) => {
+        if (!email.includes("@")) {
+            return "Email must contain @";
+        }
+        if (!/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email)) {
+            return "Only Gmail addresses are allowed (e.g. yourname@gmail.com)";
+        }
+        return "";
+    };
 
     const onSubmit = async (e) => {
         e.preventDefault();
@@ -17,14 +36,19 @@ const LoginPage = () => {
 
         const email = formData.get("email");
         const password = formData.get("password");
+        router.push(redirectPath);
 
+        setIsSubmitting(true);
         try {
             await login(email, password);
 
-            alert("Login Successful");
+            toast.success("Login Successful");
+
             router.push("/");
         } catch (error) {
-            alert(error.message);
+            toast.error(error.message);
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -48,30 +72,48 @@ const LoginPage = () => {
                             <input
                                 type="email"
                                 name="email"
+                                onChange={(e) => setEmailError(validateEmail(e.target.value))}
                                 placeholder="you@example.com"
-                                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                                className={`w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 ${emailError
+                                    ? "border-red-400 focus:ring-red-400"
+                                    : "border-gray-300 focus:ring-sky-500"
+                                    }`}
                                 required
                             />
+                            {emailError && (
+                                <p className="mt-1 text-sm text-red-500">{emailError}</p>
+                            )}
                         </div>
 
                         <div>
-                            <label className="mb-1 block text-sm font-medium text-gray-700">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Password
                             </label>
-                            <input
-                                type="password"
-                                name="password"
-                                placeholder="Enter your password"
-                                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500"
-                                required
-                            />
+                            <div className="relative">
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    name="password"
+                                    placeholder="Enter your password"
+                                    className="w-full rounded-lg border border-gray-300 px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                                    required
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                    tabIndex={-1}
+                                >
+                                    {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
+                                </button>
+                            </div>
                         </div>
 
                         <button
                             type="submit"
-                            className="mt-2 rounded-lg bg-sky-600 py-2 font-semibold text-white transition-colors hover:bg-sky-700"
+                            disabled={isSubmitting}
+                            className="mt-2 rounded-lg bg-sky-600 py-2 font-semibold text-white transition-colors hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-60"
                         >
-                            Login
+                            {isSubmitting ? "Logging in..." : "Login"}
                         </button>
                     </form>
 
@@ -81,13 +123,26 @@ const LoginPage = () => {
                         <div className="h-px flex-1 bg-gray-200" />
                     </div>
 
-                    <button
-                        type="button"
-                        className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 py-2 font-medium text-gray-700 transition-colors hover:bg-gray-50"
-                    >
-                        <FcGoogle size={20} />
-                        Continue with Google
-                    </button>
+                    <div className="flex justify-center">
+
+                        <GoogleLogin
+
+                            locale="en"
+                            onSuccess={async (credentialResponse) => {
+                                try {
+                                    await googleLogin(credentialResponse.credential);
+                                    toast.success("Login Successful");
+                                    router.push("/");
+                                } catch (error) {
+                                    toast.error(error.message);
+                                }
+                            }}
+                            onError={() => {
+                                toast.error("Google login failed");
+                            }}
+
+                        />
+                    </div>
 
                     <p className="mt-6 text-center text-sm text-gray-600">
                         Don&apos;t have an account?{" "}

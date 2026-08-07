@@ -3,6 +3,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Users, Fuel, Gauge, Settings2, MapPin } from "lucide-react";
+import { useContext } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { AuthContext } from "@/context/AuthContext";
 import Link from "next/link";
 
 
@@ -11,6 +14,19 @@ export default function CarDetailsPage() {
     const [car, setCar] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const { user } = useContext(AuthContext);
+    const router = useRouter();
+    const pathname = usePathname();
+
+
+    const handleBookNow = (e) => {
+        if (!user) {
+            e.preventDefault();
+            router.push(`/Login?redirect=${pathname}`);
+        }
+
+
+    };
 
     useEffect(() => {
         if (!id) return;
@@ -127,7 +143,7 @@ export default function CarDetailsPage() {
                                 </p>
                                 <p className="cd-display text-3xl font-bold text-[#2F6FED] leading-tight">
                                     ${car.pricePerDay}
-                                    <span className="cd-mono text-sm text-[#5B7290] font-normal">/day</span>
+                                    <span className="cd-mono text-sm text-[#5B7290] font-normal">/Km</span>
                                 </p>
                             </div>
                         </div>
@@ -198,7 +214,7 @@ export default function CarDetailsPage() {
 
                                 {/* Book Button */}
                                 <div className="px-6 pt-5 pb-6">
-                                    <Link href="/Book"> <button className="btn w-full py-4 rounded-xl bg-gradient-to-r from-[#2F6FED] to-[#4FD1E8] text-white cd-display text-xl font-bold tracking-wide hover:brightness-105 transition duration-200 border-none shadow-[0_10px_25px_rgba(47,111,237,0.35)]">
+                                    <Link href="/Book" onClick={handleBookNow}> <button className="btn w-full py-4 rounded-xl bg-gradient-to-r from-[#2F6FED] to-[#4FD1E8] text-white cd-display text-xl font-bold tracking-wide hover:brightness-105 transition duration-200 border-none shadow-[0_10px_25px_rgba(47,111,237,0.35)]">
                                         Book Now
                                     </button>
                                     </Link>
