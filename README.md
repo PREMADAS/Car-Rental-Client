@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🚗 DriveFleet — Car Rental Platform
 
-## Getting Started
+DriveFleet is a full-stack car rental platform where users can explore available cars, view detailed car information, book vehicles, manage their bookings, and maintain their own listings — all through a clean, responsive, and modern interface.
 
-First, run the development server:
+**🔗 Live Site:** [https://your-live-site-url.vercel.app](https://your-live-site-url.vercel.app) <!-- TODO: replace with your actual live URL -->
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+**🔗 Server Repository:** [https://github.com/your-username/car-rental-server](https://github.com/your-username/car-rental-server) <!-- TODO: replace with your actual server repo link -->
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## ✨ Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- 🔐 **Secure Authentication** — Email/password login with hashed passwords (bcrypt) and Google Sign-In, protected with JWT stored in HTTPOnly cookies.
+- 🚙 **Browse & Explore Cars** — View available cars on the homepage and explore the full car collection with search-by-name and filter-by-type functionality.
+- 📅 **Booking System** — Logged-in users can book any car with driver preference and special notes, with real-time booking count tracking (`$inc`) for each vehicle.
+- 🛠️ **Manage Your Own Listings** — Add, update, and delete your own car listings with full CRUD support, protected so only the owner can edit or remove their cars.
+- 📊 **My Bookings Dashboard** — Track all your bookings in one place, including car details, total price, and booking date.
+- 📱 **Fully Responsive Design** — Optimized layouts for mobile, tablet, and desktop devices with a clean, recruiter-friendly UI.
+- ⚡ **Smooth Route Handling** — Reloading any route (public or private) works seamlessly without errors or unwanted redirects for logged-in users.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🛠️ Tech Stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Client:**
+- Next.js (App Router)
+- React
+- Tailwind CSS
+- Lucide React (icons)
+- React Toastify (toast notifications)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Server:**
+- Node.js & Express.js
+- MongoDB
+- JWT (jsonwebtoken) with HTTPOnly cookies
+- bcrypt (password hashing)
+- Google Auth Library (Google Login)
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## ⚙️ Getting Started (Local Setup)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-username/car-rental-client.git
+   cd car-rental-client
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Create a `.env.local` file in the root directory and add your environment variables:
+   ```bash
+   NEXT_PUBLIC_API_URL=http://localhost:5000
+   NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id
+   ```
+
+4. Run the development server:
+   ```bash
+   npm run dev
+   ```
+
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+> ⚠️ Make sure the [server](https://github.com/your-username/car-rental-server) is running as well — the client depends on it for all data and authentication.
+
+---
+
+## 📌 Notes
+
+- All sensitive credentials (MongoDB URI, JWT secret, Google Client ID/Secret) are secured using environment variables and are **not** committed to this repository.
+- This project was built as part of Assignment Category CAT_05 — DriveFleet Car Rental Platform.
