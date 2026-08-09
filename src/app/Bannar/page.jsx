@@ -8,7 +8,7 @@ export default function Hero() {
         <div className="relative min-h-screen w-full overflow-hidden">
             {/* Background Image */}
             <Image
-                src="/images/bg_1.jpg" // tomar image path diyo
+                src="/images/bg_1.jpg"
                 alt="Rent a car"
                 fill
                 priority
@@ -18,7 +18,7 @@ export default function Hero() {
             {/* Dark overlay */}
             <div className="absolute inset-0 bg-black/40" />
 
-            {/* Navbar - image-er upore boshbe */}
+
             <Navbar />
 
             {/* Hero Content */}

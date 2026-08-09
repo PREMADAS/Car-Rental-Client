@@ -9,7 +9,7 @@ const AddCarPage = () => {
 
     const onSubmit = async (e) => {
         e.preventDefault();
-        const form = e.currentTarget; // 👈 আগেই সংরক্ষণ করে রাখো
+        const form = e.currentTarget;
         const formData = new FormData(form);
         const data = {};
 
@@ -44,7 +44,7 @@ const AddCarPage = () => {
 
             if (result.insertedId) {
                 toast.success("Car added successfully!");
-                form.reset(); // 👈 এখন e.currentTarget না, form variable ব্যবহার করছি
+                form.reset();
                 router.push("/my-added-cars");
             } else {
                 toast.error("Something went wrong");

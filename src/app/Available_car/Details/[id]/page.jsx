@@ -57,7 +57,7 @@ export default function Page() {
                 setShowModal(false);
                 setDriverNeeded(false);
                 setSpecialNote("");
-                router.push("/private/My-bookings"); // তোমার My Bookings route-এর নাম বসাও
+                router.push("/private/My-bookings"); 
             } else {
                 toast.error("Booking failed. Try again.");
             }

@@ -225,7 +225,7 @@ export default function Navbar() {
 
                             {dropdownOpen && (
                                 <>
-                                    {/* বাইরে ক্লিক করলে dropdown বন্ধ করার জন্য invisible overlay */}
+
                                     <div
                                         className="fixed inset-0 z-40"
                                         onClick={() => setDropdownOpen(false)}

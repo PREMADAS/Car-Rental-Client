@@ -211,7 +211,7 @@ export default function CarDetailsPage() {
                                     </div>
                                 </div>
 
-                                {/* corner brackets, engineering-drawing style */}
+
                                 <div className="cd-corner top-2 left-2 border-t-2 border-l-2 rounded-tl-md"></div>
                                 <div className="cd-corner top-2 right-2 border-t-2 border-r-2 rounded-tr-md"></div>
                                 <div className="cd-corner bottom-2 left-2 border-b-2 border-l-2 rounded-bl-md"></div>

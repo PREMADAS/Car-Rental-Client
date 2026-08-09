@@ -10,7 +10,7 @@ export default function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // Check logged in user when app loads
+
     useEffect(() => {
         const getCurrentUser = async () => {
             try {

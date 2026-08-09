@@ -9,7 +9,7 @@ export default function BookCarPage() {
         const formData = new FormData(e.currentTarget);
         const data = {};
 
-        // Convert FormData to plain object
+
         formData.forEach((value, key) => {
             data[key] = value.toString();
         });
