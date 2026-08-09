@@ -15,7 +15,7 @@ const FooterPage = () => {
                             Drive<span className="text-orange-400">Fleet</span>
                         </h2>
                         <p className="mt-4 text-sm text-blue-200 leading-relaxed max-w-xs sm:max-w-none">
-                            RentQ makes car rental simple, affordable, and reliable. Find your
+                            DriveFleet makes car rental simple, affordable, and reliable. Find your
                             perfect ride wherever you go.
                         </p>
                         <div className="flex gap-4 mt-6">
@@ -70,7 +70,7 @@ const FooterPage = () => {
                             </li>
                             <li className="flex items-center justify-center sm:justify-start gap-2">
                                 <Mail size={16} className="shrink-0" />
-                                support@rentq.com
+                                support@drivefleet.com
                             </li>
                         </ul>
                     </div>
@@ -79,7 +79,7 @@ const FooterPage = () => {
 
                 {/* Bottom Bar */}
                 <div className="mt-9 pt-2 border-t border-blue-800 text-center text-sm text-blue-300">
-                    © {new Date().getFullYear()} RentQ. All rights reserved.
+                    © {new Date().getFullYear()} DriveFleet. All rights reserved.
                 </div>
             </div>
         </footer>

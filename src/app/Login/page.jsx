@@ -36,15 +36,16 @@ const LoginPage = () => {
 
         const email = formData.get("email");
         const password = formData.get("password");
-        router.push(redirectPath);
+
 
         setIsSubmitting(true);
         try {
             await login(email, password);
 
             toast.success("Login Successful");
+            router.push(redirectPath);
 
-            router.push("/");
+
         } catch (error) {
             toast.error(error.message);
         } finally {

@@ -2,12 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { Users, Fuel, Gauge, Settings2, MapPin } from "lucide-react";
+import { Users, Fuel, Gauge, Settings2, MapPin, X } from "lucide-react";
 import { useContext } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { AuthContext } from "@/context/AuthContext";
-import Link from "next/link";
-
+import { toast } from "react-toastify";
 
 export default function CarDetailsPage() {
     const { id } = useParams();
@@ -18,14 +17,60 @@ export default function CarDetailsPage() {
     const router = useRouter();
     const pathname = usePathname();
 
+    // Booking modal state
+    const [showModal, setShowModal] = useState(false);
+    const [driverNeeded, setDriverNeeded] = useState(false);
+    const [specialNote, setSpecialNote] = useState("");
+    const [submitting, setSubmitting] = useState(false);
 
-    const handleBookNow = (e) => {
+    const handleBookNowClick = () => {
         if (!user) {
-            e.preventDefault();
             router.push(`/Login?redirect=${pathname}`);
+            return;
         }
+        setShowModal(true);
+    };
 
+    const handleConfirmBooking = async () => {
+        setSubmitting(true);
 
+        const bookingData = {
+            carId: car._id || id,
+            carBrand: car.brand,
+            carImage: car.imageUrl,
+            pricePerDay: car.pricePerDay,
+
+            userEmail: user.email,
+            userName: user.displayName,
+            userPhoto: user.photoURL,
+
+            driverNeeded,
+            specialNote,
+        };
+
+        try {
+            const res = await fetch("http://localhost:5000/bookings", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(bookingData),
+            });
+            const data = await res.json();
+
+            if (data.insertedId) {
+                toast.success("Booking successful!");
+                setShowModal(false);
+                setDriverNeeded(false);
+                setSpecialNote("");
+                router.push("/private/My-bookings");
+            } else {
+                toast.error("Booking failed. Try again.");
+            }
+        } catch (err) {
+            console.error(err);
+            toast.error("Something went wrong");
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     useEffect(() => {
@@ -214,10 +259,12 @@ export default function CarDetailsPage() {
 
                                 {/* Book Button */}
                                 <div className="px-6 pt-5 pb-6">
-                                    <Link href="/Book" onClick={handleBookNow}> <button className="btn w-full py-4 rounded-xl bg-gradient-to-r from-[#2F6FED] to-[#4FD1E8] text-white cd-display text-xl font-bold tracking-wide hover:brightness-105 transition duration-200 border-none shadow-[0_10px_25px_rgba(47,111,237,0.35)]">
+                                    <button
+                                        onClick={handleBookNowClick}
+                                        className="btn w-full py-4 rounded-xl bg-gradient-to-r from-[#2F6FED] to-[#4FD1E8] text-white cd-display text-xl font-bold tracking-wide hover:brightness-105 transition duration-200 border-none shadow-[0_10px_25px_rgba(47,111,237,0.35)]"
+                                    >
                                         Book Now
                                     </button>
-                                    </Link>
                                 </div>
                             </div>
 
@@ -236,6 +283,74 @@ export default function CarDetailsPage() {
 
                 </div>
             </div>
+
+            {/* Booking Modal */}
+            {showModal && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 px-4">
+                    <div className="cd-body relative w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+                        <button
+                            onClick={() => setShowModal(false)}
+                            className="absolute right-4 top-4 text-[#5B7290] hover:text-[#0F2A43]"
+                        >
+                            <X size={20} />
+                        </button>
+
+                        <p className="cd-mono text-[10px] tracking-[0.3em] uppercase text-[#2F6FED] mb-1">
+                            Confirm Booking
+                        </p>
+                        <h2 className="cd-display text-2xl font-bold text-[#0F2A43] mb-5">
+                            {car.brand}
+                        </h2>
+
+                        <div className="mb-4">
+                            <label className="block text-sm font-medium text-[#0F2A43] mb-2">
+                                Driver Needed?
+                            </label>
+                            <div className="flex items-center gap-6">
+                                <label className="flex items-center gap-2 cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        checked={driverNeeded === true}
+                                        onChange={() => setDriverNeeded(true)}
+                                        className="checkbox"
+                                    />
+                                    <span className="text-sm text-[#5B7290]">Yes</span>
+                                </label>
+                                <label className="flex items-center gap-2 cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        checked={driverNeeded === false}
+                                        onChange={() => setDriverNeeded(false)}
+                                        className="checkbox"
+                                    />
+                                    <span className="text-sm text-[#5B7290]">No</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div className="mb-6">
+                            <label className="block text-sm font-medium text-[#0F2A43] mb-1">
+                                Special Note
+                            </label>
+                            <textarea
+                                value={specialNote}
+                                onChange={(e) => setSpecialNote(e.target.value)}
+                                placeholder="Any special request..."
+                                rows={3}
+                                className="w-full rounded-lg border border-[#D9E4F5] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#2F6FED]"
+                            />
+                        </div>
+
+                        <button
+                            onClick={handleConfirmBooking}
+                            disabled={submitting}
+                            className="btn w-full py-3 rounded-xl bg-gradient-to-r from-[#2F6FED] to-[#4FD1E8] text-white cd-display text-lg font-bold tracking-wide hover:brightness-105 transition duration-200 border-none disabled:opacity-60"
+                        >
+                            {submitting ? "Booking..." : "Book Now"}
+                        </button>
+                    </div>
+                </div>
+            )}
         </>
     );
 }
