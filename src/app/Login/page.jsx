@@ -1,23 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { useContext, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useContext, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { AuthContext } from "@/context/AuthContext";
 import { toast } from "react-toastify";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { GoogleLogin } from "@react-oauth/google";
-import { useSearchParams } from "next/navigation";
 
-const LoginPage = () => {
+const LoginForm = () => {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const { login, googleLogin } = useContext(AuthContext);
+
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [emailError, setEmailError] = useState("");
-    const searchParams = useSearchParams();
-    const redirectPath = searchParams.get("redirect") || "/";
 
+    const redirectPath = searchParams.get("redirect") || "/";
 
     const validateEmail = (email) => {
         if (!email.includes("@")) {
@@ -29,25 +29,32 @@ const LoginPage = () => {
         return "";
     };
 
+    const handleEmailChange = (e) => {
+        const value = e.target.value;
+        setEmailError(validateEmail(value));
+    };
+
     const onSubmit = async (e) => {
         e.preventDefault();
 
         const formData = new FormData(e.currentTarget);
+        const email = formData.get("email")?.toString() || "";
+        const password = formData.get("password")?.toString() || "";
 
-        const email = formData.get("email");
-        const password = formData.get("password");
-
+        // Client-side Validation Check
+        const err = validateEmail(email);
+        if (err) {
+            setEmailError(err);
+            return;
+        }
 
         setIsSubmitting(true);
         try {
             await login(email, password);
-
             toast.success("Login Successful");
             router.push(redirectPath);
-
-
         } catch (error) {
-            toast.error(error.message);
+            toast.error(error.message || "Login failed");
         } finally {
             setIsSubmitting(false);
         }
@@ -55,7 +62,7 @@ const LoginPage = () => {
 
     return (
         <div className="relative min-h-screen bg-sky-50 px-4">
-            {/* Dark strip so navbar (white text) stays visible on top */}
+            {/* Dark strip so navbar stays visible on top */}
             <div className="absolute top-0 left-0 h-20 w-full bg-slate-900 sm:h-24" />
 
             {/* Login Card */}
@@ -73,11 +80,11 @@ const LoginPage = () => {
                             <input
                                 type="email"
                                 name="email"
-                                onChange={(e) => setEmailError(validateEmail(e.target.value))}
-                                placeholder="you@example.com"
+                                onChange={handleEmailChange}
+                                placeholder="you@gmail.com"
                                 className={`w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 ${emailError
-                                    ? "border-red-400 focus:ring-red-400"
-                                    : "border-gray-300 focus:ring-sky-500"
+                                        ? "border-red-400 focus:ring-red-400"
+                                        : "border-gray-300 focus:ring-sky-500"
                                     }`}
                                 required
                             />
@@ -101,7 +108,7 @@ const LoginPage = () => {
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
                                     tabIndex={-1}
                                 >
                                     {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
@@ -111,7 +118,7 @@ const LoginPage = () => {
 
                         <button
                             type="submit"
-                            disabled={isSubmitting}
+                            disabled={isSubmitting || !!emailError}
                             className="mt-2 rounded-lg bg-sky-600 py-2 font-semibold text-white transition-colors hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-60"
                         >
                             {isSubmitting ? "Logging in..." : "Login"}
@@ -125,23 +132,20 @@ const LoginPage = () => {
                     </div>
 
                     <div className="flex justify-center">
-
                         <GoogleLogin
-
                             locale="en"
                             onSuccess={async (credentialResponse) => {
                                 try {
                                     await googleLogin(credentialResponse.credential);
                                     toast.success("Login Successful");
-                                    router.push("/");
+                                    router.push(redirectPath);
                                 } catch (error) {
-                                    toast.error(error.message);
+                                    toast.error(error.message || "Google login failed");
                                 }
                             }}
                             onError={() => {
                                 toast.error("Google login failed");
                             }}
-
                         />
                     </div>
 
@@ -157,6 +161,20 @@ const LoginPage = () => {
                 </div>
             </div>
         </div>
+    );
+};
+
+const LoginPage = () => {
+    return (
+        <Suspense
+            fallback={
+                <div className="min-h-screen flex items-center justify-center bg-sky-50">
+                    <span className="loading loading-spinner loading-lg text-sky-500"></span>
+                </div>
+            }
+        >
+            <LoginForm />
+        </Suspense>
     );
 };
 

@@ -8,7 +8,7 @@ const AvailableCarPage = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('http://localhost:5000/cars')
+        fetch(`/api/cars`)
             .then(res => res.json())
             .then(data => {
                 setCars(data);

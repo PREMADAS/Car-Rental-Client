@@ -1,10 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import { Users, Fuel, Gauge, Settings2, MapPin, X } from "lucide-react";
-import { useContext } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import React, { useEffect, useState, useContext } from "react";
+import { useParams, useRouter, usePathname } from "next/navigation";
+import { Users, Fuel, Gauge, Settings2, MapPin, X, Calendar } from "lucide-react";
 import { AuthContext } from "@/context/AuthContext";
 import { toast } from "react-toastify";
 
@@ -20,8 +18,24 @@ export default function CarDetailsPage() {
     // Booking modal state
     const [showModal, setShowModal] = useState(false);
     const [driverNeeded, setDriverNeeded] = useState(false);
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
     const [specialNote, setSpecialNote] = useState("");
     const [submitting, setSubmitting] = useState(false);
+
+    // Calculate total rental days and price
+    const calculateTotalPrice = () => {
+        if (!startDate || !endDate) return { days: 0, total: 0 };
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        const diffTime = end.getTime() - start.getTime();
+        const days = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if (days <= 0) return { days: 0, total: 0 };
+        return { days, total: days * (car?.pricePerDay || 0) };
+    };
+
+    const { days, total } = calculateTotalPrice();
 
     const handleBookNowClick = () => {
         if (!user) {
@@ -32,38 +46,53 @@ export default function CarDetailsPage() {
     };
 
     const handleConfirmBooking = async () => {
+        if (!startDate || !endDate) {
+            toast.error("Please select both Pick-up and Return dates");
+            return;
+        }
+        if (days <= 0) {
+            toast.error("Return date must be after Pick-up date");
+            return;
+        }
+
         setSubmitting(true);
 
         const bookingData = {
-            carId: car._id || id,
-            carBrand: car.brand,
-            carImage: car.imageUrl,
-            pricePerDay: car.pricePerDay,
-
-            userEmail: user.email,
-            userName: user.displayName,
-            userPhoto: user.photoURL,
-
+            carId: car?._id || id,
+            carBrand: car?.brand || car?.name || `${car?.brand || ''} ${car?.model || ''}`.trim(),
+            carImage: car?.imageUrl || car?.image,
+            pricePerDay: car?.pricePerDay,
+            totalDays: days,
+            totalPrice: total,
+            startDate,
+            endDate,
+            userEmail: user?.email,
+            userName: user?.name || user?.displayName,
+            userPhoto: user?.photoURL || user?.image,
             driverNeeded,
             specialNote,
+            status: "Pending"
         };
 
         try {
-            const res = await fetch("http://localhost:5000/bookings", {
+            const res = await fetch(`/api/bookings`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
+                credentials: "include",
                 body: JSON.stringify(bookingData),
             });
             const data = await res.json();
 
-            if (data.insertedId) {
+            if (data.insertedId || data.acknowledged) {
                 toast.success("Booking successful!");
                 setShowModal(false);
                 setDriverNeeded(false);
+                setStartDate("");
+                setEndDate("");
                 setSpecialNote("");
                 router.push("/private/My-bookings");
             } else {
-                toast.error("Booking failed. Try again.");
+                toast.error(data.message || "Booking failed. Try again.");
             }
         } catch (err) {
             console.error(err);
@@ -79,7 +108,7 @@ export default function CarDetailsPage() {
         setLoading(true);
         setError(null);
 
-        fetch(`http://localhost:5000/explore/${id}`)
+        fetch(`/api/explore/${id}`)
             .then(async (res) => {
                 if (!res.ok) {
                     throw new Error(`Server returned ${res.status}`);
@@ -87,8 +116,6 @@ export default function CarDetailsPage() {
                 return res.json();
             })
             .then((data) => {
-                // Adjust this line if your backend wraps the car
-                // e.g. data.car or data.data instead of data
                 setCar(data);
             })
             .catch((err) => {
@@ -148,12 +175,15 @@ export default function CarDetailsPage() {
                         {error || "Car not found"}
                     </p>
                     <p className="text-[#5B7290] text-sm">
-                        Check that your backend is running on http://localhost:5000
+                        Check that your backend is running properly.
                     </p>
                 </div>
             </>
         );
     }
+
+    const carBrand = car.brand || car.name || `${car.brand || ''} ${car.model || ''}`.trim();
+    const carImage = car.imageUrl || car.image;
 
     const specRows = [
         { label: "Location", value: car.location, Icon: MapPin },
@@ -176,7 +206,7 @@ export default function CarDetailsPage() {
                                 Vehicle Record · {car.year}
                             </p>
                             <h1 className="cd-display text-5xl md:text-6xl font-bold text-[#0F2A43] leading-none">
-                                {car.brand}
+                                {carBrand}
                             </h1>
                         </div>
 
@@ -188,7 +218,7 @@ export default function CarDetailsPage() {
                                 </p>
                                 <p className="cd-display text-3xl font-bold text-[#2F6FED] leading-tight">
                                     ${car.pricePerDay}
-                                    <span className="cd-mono text-sm text-[#5B7290] font-normal">/Km</span>
+                                    <span className="cd-mono text-sm text-[#5B7290] font-normal">/day</span>
                                 </p>
                             </div>
                         </div>
@@ -198,12 +228,12 @@ export default function CarDetailsPage() {
                     <div className="bg-white/80 backdrop-blur border border-[#D9E4F5] rounded-2xl shadow-[0_8px_30px_rgba(15,42,67,0.06)] overflow-hidden">
                         <div className="grid lg:grid-cols-5 gap-0">
 
-                            {/* Left: Image with blueprint-style corner marks */}
+                            {/* Left Image */}
                             <div className="lg:col-span-3 relative p-5">
-                                <div className="relative rounded-xl overflow-hidden">
+                                <div className="relative rounded-xl overflow-hidden bg-gray-100">
                                     <img
-                                        src={car.imageUrl}
-                                        alt={car.brand}
+                                        src={carImage}
+                                        alt={carBrand}
                                         className="w-full h-[300px] lg:h-[420px] object-cover"
                                     />
                                     <div className="absolute top-3 left-3 cd-mono text-[10px] tracking-[0.3em] uppercase bg-white/85 backdrop-blur px-3 py-1.5 rounded-full text-[#0F2A43] border border-[#D9E4F5]">
@@ -211,14 +241,13 @@ export default function CarDetailsPage() {
                                     </div>
                                 </div>
 
-
                                 <div className="cd-corner top-2 left-2 border-t-2 border-l-2 rounded-tl-md"></div>
                                 <div className="cd-corner top-2 right-2 border-t-2 border-r-2 rounded-tr-md"></div>
                                 <div className="cd-corner bottom-2 left-2 border-b-2 border-l-2 rounded-bl-md"></div>
                                 <div className="cd-corner bottom-2 right-2 border-b-2 border-r-2 rounded-br-md"></div>
                             </div>
 
-                            {/* Right: Spec tiles */}
+                            {/* Right Spec Tiles */}
                             <div className="lg:col-span-2 border-t lg:border-t-0 lg:border-l border-[#E5ECF7] flex flex-col">
                                 <div className="px-6 pt-6 pb-3">
                                     <p className="cd-mono text-[10px] tracking-[0.3em] uppercase text-[#5B7290]">
@@ -239,7 +268,7 @@ export default function CarDetailsPage() {
                                                 {label}
                                             </p>
                                             <p className="cd-display text-lg font-semibold text-[#0F2A43]">
-                                                {value}
+                                                {value || "N/A"}
                                             </p>
                                         </div>
                                     ))}
@@ -252,12 +281,11 @@ export default function CarDetailsPage() {
                                             Rating
                                         </p>
                                         <p className="cd-display text-lg font-semibold text-[#0F2A43]">
-                                            {car.rating} / 5
+                                            {car.rating || 5} / 5
                                         </p>
                                     </div>
                                 </div>
 
-                                {/* Book Button */}
                                 <div className="px-6 pt-5 pb-6">
                                     <button
                                         onClick={handleBookNowClick}
@@ -277,7 +305,7 @@ export default function CarDetailsPage() {
                             Description
                         </p>
                         <p className="text-[#3C4E64] leading-8 cd-body">
-                            {car.description}
+                            {car.description || "No description provided."}
                         </p>
                     </div>
 
@@ -286,8 +314,8 @@ export default function CarDetailsPage() {
 
             {/* Booking Modal */}
             {showModal && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 px-4">
-                    <div className="cd-body relative w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 px-4 backdrop-blur-sm">
+                    <div className="cd-body relative w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
                         <button
                             onClick={() => setShowModal(false)}
                             className="absolute right-4 top-4 text-[#5B7290] hover:text-[#0F2A43]"
@@ -299,37 +327,79 @@ export default function CarDetailsPage() {
                             Confirm Booking
                         </p>
                         <h2 className="cd-display text-2xl font-bold text-[#0F2A43] mb-5">
-                            {car.brand}
+                            {carBrand}
                         </h2>
 
+                        {/* Pick-up and Return Dates */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label className="block text-xs font-semibold uppercase tracking-wider text-[#0F2A43] mb-1">
+                                    Pick-up Date
+                                </label>
+                                <input
+                                    type="date"
+                                    value={startDate}
+                                    min={new Date().toISOString().split("T")[0]}
+                                    onChange={(e) => setStartDate(e.target.value)}
+                                    className="w-full rounded-lg border border-[#D9E4F5] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#2F6FED]"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-semibold uppercase tracking-wider text-[#0F2A43] mb-1">
+                                    Return Date
+                                </label>
+                                <input
+                                    type="date"
+                                    value={endDate}
+                                    min={startDate || new Date().toISOString().split("T")[0]}
+                                    onChange={(e) => setEndDate(e.target.value)}
+                                    className="w-full rounded-lg border border-[#D9E4F5] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#2F6FED]"
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        {/* Dynamic Total Price Display */}
+                        {days > 0 && (
+                            <div className="mb-4 p-3 rounded-lg bg-[#F6F9FE] border border-[#D9E4F5] flex justify-between items-center text-sm">
+                                <span className="text-[#5B7290]">Total Duration ({days} days):</span>
+                                <span className="font-bold text-[#2F6FED] text-base">${total}</span>
+                            </div>
+                        )}
+
+                        {/* Driver Needed */}
                         <div className="mb-4">
-                            <label className="block text-sm font-medium text-[#0F2A43] mb-2">
+                            <label className="block text-xs font-semibold uppercase tracking-wider text-[#0F2A43] mb-2">
                                 Driver Needed?
                             </label>
                             <div className="flex items-center gap-6">
                                 <label className="flex items-center gap-2 cursor-pointer">
                                     <input
-                                        type="checkbox"
+                                        type="radio"
+                                        name="driverNeeded"
                                         checked={driverNeeded === true}
                                         onChange={() => setDriverNeeded(true)}
-                                        className="checkbox"
+                                        className="radio radio-primary radio-sm"
                                     />
                                     <span className="text-sm text-[#5B7290]">Yes</span>
                                 </label>
                                 <label className="flex items-center gap-2 cursor-pointer">
                                     <input
-                                        type="checkbox"
+                                        type="radio"
+                                        name="driverNeeded"
                                         checked={driverNeeded === false}
                                         onChange={() => setDriverNeeded(false)}
-                                        className="checkbox"
+                                        className="radio radio-primary radio-sm"
                                     />
                                     <span className="text-sm text-[#5B7290]">No</span>
                                 </label>
                             </div>
                         </div>
 
+                        {/* Special Note */}
                         <div className="mb-6">
-                            <label className="block text-sm font-medium text-[#0F2A43] mb-1">
+                            <label className="block text-xs font-semibold uppercase tracking-wider text-[#0F2A43] mb-1">
                                 Special Note
                             </label>
                             <textarea
@@ -346,7 +416,7 @@ export default function CarDetailsPage() {
                             disabled={submitting}
                             className="btn w-full py-3 rounded-xl bg-gradient-to-r from-[#2F6FED] to-[#4FD1E8] text-white cd-display text-lg font-bold tracking-wide hover:brightness-105 transition duration-200 border-none disabled:opacity-60"
                         >
-                            {submitting ? "Booking..." : "Book Now"}
+                            {submitting ? "Booking..." : "Confirm Booking"}
                         </button>
                     </div>
                 </div>

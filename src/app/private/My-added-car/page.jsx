@@ -29,7 +29,7 @@ export default function MyAddedCarsPage() {
         }
 
         setLoading(true);
-        fetch(`http://localhost:5000/my-added-cars?email=${user.email}`, {
+        fetch(`/api/my-added-cars?email=${user.email}`, {
             credentials: "include",
         })
             .then(async (res) => {
@@ -58,7 +58,7 @@ export default function MyAddedCarsPage() {
 
     const handleConfirmDelete = async () => {
         try {
-            const res = await fetch(`http://localhost:5000/my-added-cars/${selectedCar._id}`, {
+            const res = await fetch(`/api/my-added-cars/${selectedCar._id}`, {
                 method: "DELETE",
                 credentials: "include",
             });

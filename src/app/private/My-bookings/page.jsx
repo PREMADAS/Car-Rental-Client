@@ -23,7 +23,7 @@ export default function MyBookingsPage() {
         setLoading(true);
         setError(null);
 
-        fetch(`http://localhost:5000/bookings?email=${user.email}`, {
+        fetch(`/api/bookings?email=${user.email}`, {
             credentials: "include",
         })
             .then(async (res) => {

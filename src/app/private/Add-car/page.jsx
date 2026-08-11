@@ -21,7 +21,7 @@ const AddCarPage = () => {
 
         setSubmitting(true);
         try {
-            const res = await fetch("http://localhost:5000/new", {
+            const res = await fetch(`/api/new`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

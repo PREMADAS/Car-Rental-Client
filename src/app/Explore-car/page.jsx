@@ -38,7 +38,7 @@ export default function ExploreCarPage() {
         setLoading(true);
 
 
-        fetch(`http://localhost:5000/explore?${params.toString()}`)
+        fetch(`/api/explore?${params.toString()}`)
             .then(res => res.json())
             .then(data => {
                 setCars(data);

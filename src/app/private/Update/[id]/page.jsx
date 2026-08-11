@@ -24,7 +24,7 @@ const UpdateCarPage = () => {
         }
 
         setLoading(true);
-        fetch(`http://localhost:5000/my-added-cars/${id}`, {
+        fetch(`/api/my-added-cars/${id}`, {
             credentials: "include",
         })
             .then(async (res) => {
@@ -54,7 +54,7 @@ const UpdateCarPage = () => {
 
         setSubmitting(true);
         try {
-            const res = await fetch(`http://localhost:5000/my-added-cars/${id}`, {
+            const res = await fetch(`/api/my-added-cars/${id}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
