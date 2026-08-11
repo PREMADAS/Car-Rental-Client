@@ -2,9 +2,9 @@
 
 DriveFleet is a full-stack car rental platform where users can explore available cars, view detailed car information, book vehicles, manage their bookings, and maintain their own listings — all through a clean, responsive, and modern interface.
 
-**🔗 Live Site:** [https://car-rental-platform-client.vercel.app](https://your-live-site-url.vercel.app) <!-- TODO: replace with your actual live URL -->
+**🔗 Live Site:** [https://car-rental-platform-client.vercel.app](https://car-rental-platform-client.vercel.app/)
 
-**🔗 Server Repository:** [https://github.com/PREMADAS/car-rental-server](https://github.com/your-username/car-rental-server) <!-- TODO: replace with your actual server repo link -->
+**🔗 Server Repository:** [https://github.com/PREMADAS/car-rental-server](https://github.com/PREMADAS/car-rental-server)
 
 ---
 
@@ -42,8 +42,8 @@ DriveFleet is a full-stack car rental platform where users can explore available
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/car-rental-client.git
-   cd car-rental-client
+   git clone https://github.com/PREMADAS/Car-Rental-Client.git
+   cd Car-Rental-Client
    ```
 
 2. Install dependencies:
@@ -64,7 +64,7 @@ DriveFleet is a full-stack car rental platform where users can explore available
 
 5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-> ⚠️ Make sure the [server](https://github.com/your-username/car-rental-server) is running as well — the client depends on it for all data and authentication.
+> ⚠️ Make sure the [server](https://github.com/PREMADAS/car-rental-server) is running as well — the client depends on it for all data and authentication.
 
 ---
 
