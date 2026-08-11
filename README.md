@@ -2,9 +2,9 @@
 
 DriveFleet is a full-stack car rental platform where users can explore available cars, view detailed car information, book vehicles, manage their bookings, and maintain their own listings — all through a clean, responsive, and modern interface.
 
-**🔗 Live Site:** [https://your-live-site-url.vercel.app](https://your-live-site-url.vercel.app) <!-- TODO: replace with your actual live URL -->
+**🔗 Live Site:** [https://car-rental-platform-client.vercel.app](https://your-live-site-url.vercel.app) <!-- TODO: replace with your actual live URL -->
 
-**🔗 Server Repository:** [https://github.com/your-username/car-rental-server](https://github.com/your-username/car-rental-server) <!-- TODO: replace with your actual server repo link -->
+**🔗 Server Repository:** [https://github.com/PREMADAS/car-rental-server](https://github.com/your-username/car-rental-server) <!-- TODO: replace with your actual server repo link -->
 
 ---
 
