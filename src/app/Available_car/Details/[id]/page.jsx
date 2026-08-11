@@ -16,7 +16,7 @@ export default function CarDetailsPage() {
     const router = useRouter();
     const pathname = usePathname();
 
-    // Booking modal states
+    
     const [showModal, setShowModal] = useState(false);
     const [driverNeeded, setDriverNeeded] = useState(false);
     const [startDate, setStartDate] = useState("");
@@ -24,7 +24,7 @@ export default function CarDetailsPage() {
     const [specialNote, setSpecialNote] = useState("");
     const [submitting, setSubmitting] = useState(false);
 
-    // Dynamic rental days and total price calculation
+    
     const calculateTotalPrice = () => {
         if (!startDate || !endDate) return { days: 0, total: 0 };
         const start = new Date(startDate);
